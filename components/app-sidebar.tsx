@@ -14,8 +14,6 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { ModeToggle } from "./ui/mode-toggle"
-import { LogoutButton } from "./logout-button"
 
 // This is sample data.
 const data = {
@@ -63,8 +61,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <ModeToggle />
-        <LogoutButton />
         <VersionSwitcher
           versions={data.versions}
           defaultVersion={data.versions[0]}
