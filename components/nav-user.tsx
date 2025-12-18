@@ -30,7 +30,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
+import { createBrowserSupabaseClient } from "@/lib/supabase/client"
 
 export function NavUser({
   user,
@@ -45,7 +45,7 @@ export function NavUser({
   const router = useRouter();
 
   const logout = async () => {
-    const supabase = createClient();
+    const supabase = createBrowserSupabaseClient();
     await supabase.auth.signOut();
     router.push("/login");
   };
