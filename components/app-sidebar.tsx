@@ -21,36 +21,35 @@ const data = {
   navMain: [
     {
       title: "Painel",
-      url: "#",
       items: [
         {
           title: "Inicio",
-          url: "#",
+          url: "/dashboard",
           isActive: true,
         },
         {
           title: "Agendamentos",
-          url: "#",
+          url: "/dashboard/agendamentos",
         },
         {
           title: "Serviços",
-          url: "#",
+          url: "/dashboard/servicos",
         },
         {
           title: "Profissionais",
-          url: "#",
+          url: "/dashboard/profissionais",
         },
         {
           title: "Clientes",
-          url: "#",
+          url: "/dashboard/clientes",
         },
         {
           title: "Horários",
-          url: "#",
+          url: "/dashboard/horarios",
         },
         {
           title: "Configurações",
-          url: "#",
+          url: "/dashboard/configuracoes",
         },
       ],
     },
