@@ -31,25 +31,102 @@ import {
 } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation"
 import { createBrowserSupabaseClient } from "@/lib/supabase/client"
+import { useEffect, useState } from "react"
+import { Skeleton } from "@/components/ui/skeleton"
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}) {
+type UserData = {
+  name: string
+  email: string
+  avatar?: string
+}
+
+export function NavUser() {
   const { isMobile } = useSidebar()
-  const router = useRouter();
+  const router = useRouter()
+  const supabase = createBrowserSupabaseClient()
+
+  const [user, setUser] = useState<UserData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Busca dados de autenticação
+        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
+
+        if (authError || !authUser) {
+          console.error("Erro ao buscar usuário:", authError)
+          setLoading(false)
+          return
+        }
+
+        // Busca dados do perfil
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("full_name, email")
+          .eq("id", authUser.id)
+          .single()
+
+        if (profileError) {
+          console.error("Erro ao buscar perfil:", profileError)
+          // Fallback para dados do auth
+          setUser({
+            name: authUser.user_metadata?.full_name || authUser.email?.split("@")[0] || "Usuário",
+            email: authUser.email || "",
+            avatar: authUser.user_metadata?.avatar_url,
+          })
+        } else {
+          setUser({
+            name: profile.full_name,
+            email: profile.email,
+            avatar: authUser.user_metadata?.avatar_url,
+          })
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUserData()
+  }, [supabase])
 
   const logout = async () => {
-    const supabase = createBrowserSupabaseClient();
-    await supabase.auth.signOut();
-    router.push("/login");
-  };
+    await supabase.auth.signOut()
+    router.push("/login")
+  }
 
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
+  }
+
+  // Estado de carregamento
+  if (loading) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <div className="flex items-center gap-2 px-2 py-1.5">
+            <Skeleton className="h-8 w-8 rounded-lg" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+          </div>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    )
+  }
+
+  // Se não houver usuário
+  if (!user) {
+    return null
+  }
 
   return (
     <SidebarMenu>
@@ -61,8 +138,10 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                {user.avatar && <AvatarImage src={user.avatar} alt={user.name} />}
+                <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-semibold">
+                  {getInitials(user.name)}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -80,8 +159,10 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  {user.avatar && <AvatarImage src={user.avatar} alt={user.name} />}
+                  <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-semibold">
+                    {getInitials(user.name)}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>

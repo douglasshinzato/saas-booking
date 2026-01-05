@@ -1,6 +1,9 @@
-import * as React from "react"
+"use client";
 
-import { SearchForm } from "@/components/search-form"
+import * as React from "react";
+import { usePathname } from "next/navigation";
+
+import { SearchForm } from "@/components/search-form";
 import {
   Sidebar,
   SidebarContent,
@@ -12,20 +15,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { NavUser } from "./nav-user"
+} from "@/components/ui/sidebar";
+import { NavUser } from "./nav-user";
 
-// This is sample data.
+// Dados de navegação
 const data = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
     {
       title: "Painel",
       items: [
         {
-          title: "Inicio",
+          title: "Início",
           url: "/dashboard",
-          isActive: true,
         },
         {
           title: "Agendamentos",
@@ -54,29 +55,34 @@ const data = {
       ],
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <NavUser user={{ name: "John Doe", email: "john@example.com", avatar: "https://github.com/shadcn.png" }} />
+        <NavUser />
         <SearchForm />
       </SidebarHeader>
       <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
         {data.navMain.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {item.items.map((menuItem) => {
+                  const isActive = pathname === menuItem.url;
+
+                  return (
+                    <SidebarMenuItem key={menuItem.title}>
+                      <SidebarMenuButton asChild isActive={isActive}>
+                        <a href={menuItem.url}>{menuItem.title}</a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -84,5 +90,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
