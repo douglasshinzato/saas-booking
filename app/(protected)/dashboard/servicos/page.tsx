@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Edit2, Trash2, Search, Clock, DollarSign, Loader2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, Clock, Ban, DollarSign, Loader2 } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -310,8 +310,11 @@ export default function ServicesPage() {
                     )}
                   >
                     <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1 pr-10">
+                      {/* Container Principal */}
+                      <div className="flex flex-col lg:block">
+
+                        {/* Bloco de Texto (Título e Descrição) */}
+                        <div className="mb-3 lg:pr-10">
                           <h3 className="font-medium flex items-center gap-2">
                             {service.name}
                             {!service.is_active && (
@@ -325,12 +328,26 @@ export default function ServicesPage() {
                           </p>
                         </div>
 
-                        {/* Ações (Edit, Toggle, Delete) */}
-                        <div className="flex gap-1 absolute right-4 top-4 bg-background/90 backdrop-blur-sm p-1 rounded-lg border shadow-sm transition-opacity opacity-100 lg:opacity-0 lg:group-hover:opacity-100 z-10">
+                        {/* Botões de Ação (RESPONSIVO) 
+                        Mobile: Flex row no final (justify-end), static (fluxo normal), mt-2
+                        Desktop: Absolute top-right, opacity controlada pelo group-hover
+                        */}
+                        <div className={cn(
+                          // --- MOBILE (Padrão) ---
+                          "flex gap-1 justify-end mt-2",
+                          "opacity-100", // Sempre visível no mobile
+
+                          // --- DESKTOP (lg) ---
+                          "lg:absolute lg:right-4 lg:top-4 lg:mt-0",
+                          "lg:opacity-0 lg:group-hover:opacity-100", // Invisível até hover
+                          "lg:bg-background/90 lg:backdrop-blur-sm lg:p-1 lg:rounded-lg lg:border lg:shadow-sm", // Estilo flutuante apenas no desktop
+
+                          "transition-opacity z-10"
+                        )}>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-primary hover:text-primary hover:bg-primary/10"
+                            className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10"
                             onClick={() => handleEdit(service)}
                             title="Editar"
                           >
@@ -339,23 +356,26 @@ export default function ServicesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:bg-muted"
+                            className="h-8 w-8 text-muted-foreground hover:bg-muted"
                             onClick={() => handleToggleActive(service)}
                             title={service.is_active ? "Desativar" : "Ativar"}
                           >
-                            <Clock className="h-4 w-4" />
+                            <Ban className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                             onClick={() => confirmDelete(service.id)}
                             title="Excluir"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
+
                       </div>
+
+                      {/* Rodapé do Card (Tempo e Preço) */}
                       <div className="flex items-center justify-between text-sm mt-3 pt-3 border-t">
                         <div className="flex items-center gap-1.5 text-muted-foreground bg-muted/30 px-2 py-1 rounded">
                           <Clock className="h-3.5 w-3.5" />
