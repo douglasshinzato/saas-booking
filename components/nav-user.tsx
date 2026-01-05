@@ -1,12 +1,10 @@
 "use client"
 
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
+  Settings,
+  User,
 } from "lucide-react"
 
 import {
@@ -17,7 +15,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -51,7 +48,6 @@ export function NavUser() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Busca dados de autenticação
         const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
 
         if (authError || !authUser) {
@@ -60,7 +56,6 @@ export function NavUser() {
           return
         }
 
-        // Busca dados do perfil
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("full_name, email")
@@ -69,7 +64,6 @@ export function NavUser() {
 
         if (profileError) {
           console.error("Erro ao buscar perfil:", profileError)
-          // Fallback para dados do auth
           setUser({
             name: authUser.user_metadata?.full_name || authUser.email?.split("@")[0] || "Usuário",
             email: authUser.email || "",
@@ -106,16 +100,15 @@ export function NavUser() {
       .slice(0, 2)
   }
 
-  // Estado de carregamento
   if (loading) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
           <div className="flex items-center gap-2 px-2 py-1.5">
             <Skeleton className="h-8 w-8 rounded-lg" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-3 w-32" />
+            <div className="flex-1 space-y-1">
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-2.5 w-28" />
             </div>
           </div>
         </SidebarMenuItem>
@@ -123,7 +116,6 @@ export function NavUser() {
     )
   }
 
-  // Se não houver usuário
   if (!user) {
     return null
   }
@@ -139,20 +131,20 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 {user.avatar && <AvatarImage src={user.avatar} alt={user.name} />}
-                <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-semibold">
+                <AvatarFallback className="rounded-lg bg-muted text-muted-foreground font-semibold">
                   {getInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "bottom"}
+            side={isMobile ? "bottom" : "top"}
             align="end"
             sideOffset={4}
           >
@@ -160,42 +152,29 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   {user.avatar && <AvatarImage src={user.avatar} alt={user.name} />}
-                  <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-semibold">
+                  <AvatarFallback className="rounded-lg bg-muted text-muted-foreground font-semibold">
                     {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate text-xs text-muted-foreground">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+            <DropdownMenuItem>
+              <User />
+              Meu Perfil
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings />
+              Preferências
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout}>
+            <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
               <LogOut />
-              Log out
+              Sair
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

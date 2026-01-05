@@ -7,6 +7,7 @@ import { SearchForm } from "@/components/search-form";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -17,6 +18,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
+import { EstablishmentHeader } from "./establishment-header";
 
 // Dados de navegação
 const data = {
@@ -63,7 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <NavUser />
+        <EstablishmentHeader />
         <SearchForm />
       </SidebarHeader>
       <SidebarContent>
@@ -88,6 +90,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
