@@ -54,6 +54,10 @@ const data = {
           title: "Configurações",
           url: "/dashboard/configuracoes",
         },
+        {
+          title: "Preferências",
+          url: "/dashboard/preferencias",
+        },
       ],
     },
   ],

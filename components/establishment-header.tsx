@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Store, ChevronDown } from "lucide-react"
+import { Store, ChevronDown, ExternalLink, Copy, Check, Building2 } from "lucide-react"
 import { createBrowserSupabaseClient } from "@/lib/supabase/client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -13,6 +13,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 type EstablishmentData = {
   id: string
@@ -23,13 +25,14 @@ type EstablishmentData = {
 
 export function EstablishmentHeader() {
   const supabase = createBrowserSupabaseClient()
+  const router = useRouter()
   const [establishment, setEstablishment] = useState<EstablishmentData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     const fetchEstablishment = async () => {
       try {
-        // Busca o usuário autenticado
         const { data: { user }, error: authError } = await supabase.auth.getUser()
 
         if (authError || !user) {
@@ -38,7 +41,6 @@ export function EstablishmentHeader() {
           return
         }
 
-        // Busca o establishment_id do perfil
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("establishment_id")
@@ -51,7 +53,6 @@ export function EstablishmentHeader() {
           return
         }
 
-        // Busca os dados do estabelecimento
         const { data: establishmentData, error: establishmentError } = await supabase
           .from("establishments")
           .select("id, name, slug, logo_url")
@@ -82,7 +83,33 @@ export function EstablishmentHeader() {
       .slice(0, 2)
   }
 
-  // Estado de carregamento
+  const getPublicUrl = () => {
+    if (!establishment) return ""
+    return `${window.location.origin}/${establishment.slug}`
+  }
+
+  const copyPublicLink = async () => {
+    const url = getPublicUrl()
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      toast.success("Link copiado para a área de transferência!")
+      setTimeout(() => setCopied(false), 2000)
+    } catch (error) {
+      console.error("Erro ao copiar:", error)
+      toast.error("Erro ao copiar link")
+    }
+  }
+
+  const openPublicPage = () => {
+    const url = getPublicUrl()
+    window.open(url, "_blank")
+  }
+
+  const goToSettings = () => {
+    router.push("/dashboard/configuracoes")
+  }
+
   if (loading) {
     return (
       <div className="flex items-center gap-3 px-2 py-3">
@@ -95,7 +122,6 @@ export function EstablishmentHeader() {
     )
   }
 
-  // Se não houver estabelecimento
   if (!establishment) {
     return (
       <div className="flex items-center gap-3 px-2 py-3">
@@ -130,7 +156,7 @@ export function EstablishmentHeader() {
           <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-[--radix-dropdown-menu-trigger-width]">
+      <DropdownMenuContent align="start" className="w-[--radix-dropdown-menu-trigger-width] min-w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">{establishment.name}</p>
@@ -138,12 +164,27 @@ export function EstablishmentHeader() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Store className="h-4 w-4" />
-          Configurações do Estabelecimento
+        <DropdownMenuItem onClick={openPublicPage}>
+          <ExternalLink className="h-4 w-4" />
+          Abrir Página Pública
         </DropdownMenuItem>
-        <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-          ID: {establishment.id.slice(0, 8)}...
+        <DropdownMenuItem onClick={copyPublicLink}>
+          {copied ? (
+            <>
+              <Check className="h-4 w-4 text-green-600" />
+              Link Copiado!
+            </>
+          ) : (
+            <>
+              <Copy className="h-4 w-4" />
+              Copiar Link Público
+            </>
+          )}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={goToSettings}>
+          <Building2 className="h-4 w-4" />
+          Configurações do Estabelecimento
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

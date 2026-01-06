@@ -4,7 +4,6 @@ import {
   ChevronsUpDown,
   LogOut,
   Settings,
-  User,
 } from "lucide-react"
 
 import {
@@ -163,11 +162,7 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User />
-              Meu Perfil
-            </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/dashboard/preferencias")}>
               <Settings />
               Preferências
             </DropdownMenuItem>
