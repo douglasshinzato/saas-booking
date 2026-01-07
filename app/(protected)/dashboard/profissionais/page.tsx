@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Edit2, Trash2, Search, Ban, Phone, Loader2, User } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, Ban, Phone, Loader2, User, Check } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -421,7 +421,7 @@ export default function ProfessionalsPage() {
                           onClick={() => handleToggleActive(professional)}
                           title="Ativar"
                         >
-                          <Ban className="h-4 w-4" />
+                          <Check className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"

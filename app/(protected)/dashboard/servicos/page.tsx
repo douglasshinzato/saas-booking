@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Edit2, Trash2, Search, Clock, Ban, DollarSign, Loader2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Search, Clock, Ban, DollarSign, Loader2, Check } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -360,7 +360,7 @@ export default function ServicesPage() {
                             onClick={() => handleToggleActive(service)}
                             title={service.is_active ? "Desativar" : "Ativar"}
                           >
-                            <Ban className="h-4 w-4" />
+                            {service.is_active ? <Ban className="h-4 w-4" /> : <Check className="h-4 w-4" />}
                           </Button>
                           <Button
                             variant="ghost"
