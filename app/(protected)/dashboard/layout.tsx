@@ -1,6 +1,7 @@
 "use client";
 
 import { AppSidebar } from "@/components/app-sidebar";
+import { SessionMonitor } from "@/components/session-monitor";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -37,6 +38,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
+      <SessionMonitor />
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
