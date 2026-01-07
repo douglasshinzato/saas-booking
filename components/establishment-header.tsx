@@ -5,6 +5,7 @@ import { Store, ChevronDown, ExternalLink, Copy, Check, Building2 } from "lucide
 import { createBrowserSupabaseClient } from "@/lib/supabase/client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useSidebar } from "@/components/ui/sidebar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 type EstablishmentData = {
   id: string
@@ -25,7 +26,7 @@ type EstablishmentData = {
 
 export function EstablishmentHeader() {
   const supabase = createBrowserSupabaseClient()
-  const router = useRouter()
+  const { isMobile, setOpenMobile } = useSidebar()
   const [establishment, setEstablishment] = useState<EstablishmentData | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
@@ -106,10 +107,6 @@ export function EstablishmentHeader() {
     window.open(url, "_blank")
   }
 
-  const goToSettings = () => {
-    router.push("/dashboard/configuracoes")
-  }
-
   if (loading) {
     return (
       <div className="flex items-center gap-3 px-2 py-3">
@@ -182,9 +179,16 @@ export function EstablishmentHeader() {
           )}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={goToSettings}>
-          <Building2 className="h-4 w-4" />
-          Configurações do Estabelecimento
+        <DropdownMenuItem asChild>
+          <Link
+            href="/dashboard/configuracoes"
+            onClick={() => {
+              if (isMobile) setOpenMobile(false)
+            }}
+          >
+            <Building2 className="h-4 w-4" />
+            Configurações do Estabelecimento
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

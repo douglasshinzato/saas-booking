@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation"
 import { createBrowserSupabaseClient } from "@/lib/supabase/client"
 import { useEffect, useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
+import Link from "next/link"
 
 type UserData = {
   name: string
@@ -37,7 +38,7 @@ type UserData = {
 }
 
 export function NavUser() {
-  const { isMobile } = useSidebar()
+  const { isMobile, setOpenMobile } = useSidebar()
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
 
@@ -162,9 +163,16 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push("/dashboard/preferencias")}>
-              <Settings />
-              Preferências
+            <DropdownMenuItem asChild>
+              <Link
+                href="/dashboard/preferencias"
+                onClick={() => {
+                  if (isMobile) setOpenMobile(false)
+                }}
+              >
+                <Settings />
+                Preferências
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
