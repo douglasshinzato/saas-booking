@@ -26,9 +26,17 @@ type Props = {
   showDate?: boolean
   showActions?: boolean
   onUpdate?: () => void
+  onCancel?: (id: string) => void // NOVA PROP
 }
 
-export function AppointmentCard({ appointment, showStaff, showDate, showActions, onUpdate }: Props) {
+export function AppointmentCard({
+  appointment,
+  showStaff,
+  showDate,
+  showActions,
+  onUpdate,
+  onCancel // Recebendo a prop
+}: Props) {
   const supabase = createBrowserSupabaseClient()
 
   const statusColors = {
@@ -61,22 +69,6 @@ export function AppointmentCard({ appointment, showStaff, showDate, showActions,
     }
   }
 
-  const handleCancel = async () => {
-    try {
-      const { error } = await supabase
-        .from("appointments")
-        .update({ status: "cancelled" })
-        .eq("id", appointment.id)
-
-      if (error) throw error
-      toast.success("Agendamento cancelado")
-      onUpdate?.()
-    } catch (error) {
-      console.error(error)
-      toast.error("Erro ao cancelar agendamento")
-    }
-  }
-
   const handleComplete = async () => {
     try {
       const { error } = await supabase
@@ -92,6 +84,8 @@ export function AppointmentCard({ appointment, showStaff, showDate, showActions,
       toast.error("Erro ao concluir agendamento")
     }
   }
+
+  // O handleCancel interno foi removido/substituído pela chamada da prop direta no botão
 
   const startTime = parseISO(appointment.start_time)
 
@@ -160,8 +154,10 @@ export function AppointmentCard({ appointment, showStaff, showDate, showActions,
               <Check className="h-4 w-4" />
             </button>
           )}
+
+          {/* MUDANÇA AQUI: Agora chama a prop onCancel passada pelo pai */}
           <button
-            onClick={handleCancel}
+            onClick={() => onCancel?.(appointment.id)}
             className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500/30 transition-colors"
             title="Cancelar"
           >
