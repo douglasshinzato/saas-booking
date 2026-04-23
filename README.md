@@ -1,36 +1,133 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SaaS Booking
 
-## Getting Started
+Aplicação SaaS para gestão de agendamentos de estabelecimentos (ex.: barbearia, salão, clínica), com painel administrativo protegido e página pública de reserva por slug.
 
-First, run the development server:
+## Visão Geral
+
+O projeto foi construído com Next.js (App Router) e Supabase para autenticação e dados.
+
+Principais objetivos:
+
+- Permitir cadastro e login de estabelecimentos.
+- Oferecer painel com métricas e operação diária.
+- Gerenciar serviços, profissionais, clientes, horários e agendamentos.
+- Disponibilizar uma página pública de agendamento para clientes finais em `/{slug}`.
+
+## Funcionalidades
+
+- Autenticação com Supabase (login, cadastro, confirmação de email, recuperação e atualização de senha).
+- Rotas protegidas para o painel administrativo.
+- Dashboard com KPIs e gráfico de faturamento.
+- CRUD de serviços.
+- CRUD de profissionais.
+- Gestão de agendamentos com validações de conflito de horário.
+- Cadastro/gestão de clientes.
+- Página pública de booking por slug do estabelecimento.
+- Tema com suporte a claro/escuro.
+
+## Stack Tecnológica
+
+- Next.js 16 (App Router)
+- React 19 + TypeScript
+- Supabase (`@supabase/ssr` e `@supabase/supabase-js`)
+- Tailwind CSS 4
+- Radix UI + componentes em `components/ui`
+- date-fns
+- Recharts
+- Sonner (toast)
+
+## Estrutura do Projeto
+
+```text
+app/
+	(auth)/               # Fluxos de autenticação (login, cadastro, senha, confirmação)
+	(protected)/dashboard # Painel administrativo e módulos de gestão
+	[slug]/               # Página pública de agendamento do estabelecimento
+components/
+	ui/                   # Biblioteca de componentes de interface
+lib/
+	supabase/             # Clientes browser/server e middleware de sessão
+hooks/                  # Hooks reutilizáveis
+```
+
+## Requisitos
+
+- Node.js 20+ (recomendado)
+- npm (ou pnpm/yarn/bun)
+- Projeto Supabase configurado
+
+## Configuração
+
+1. Instale dependências:
+
+```bash
+npm install
+```
+
+2. Crie o arquivo `.env.local` na raiz com as variáveis:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://SEU-PROJETO.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=SUA_PUBLIC_ANON_KEY
+```
+
+3. Inicie o ambiente de desenvolvimento:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Acesse no navegador:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+- `npm run dev`: inicia o servidor de desenvolvimento.
+- `npm run build`: gera build de produção.
+- `npm run start`: inicia a aplicação em modo produção.
+- `npm run lint`: executa lint com ESLint.
 
-To learn more about Next.js, take a look at the following resources:
+## Rotas Principais
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Públicas:
+	- `/sign-up`
+	- `/login`
+	- `/forgot-password`
+	- `/update-password`
+	- `/{slug}` (agendamento público)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Protegidas:
+	- `/dashboard`
+	- `/dashboard/agendamentos`
+	- `/dashboard/servicos`
+	- `/dashboard/profissionais`
+	- `/dashboard/clientes`
+	- `/dashboard/horarios`
+	- `/dashboard/configuracoes`
 
-## Deploy on Vercel
+## Observações de Banco de Dados
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Pelo código atual, a aplicação espera tabelas no Supabase com entidades como:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `profiles`
+- `establishments`
+- `services`
+- `professionals`
+- `customers`
+- `appointments`
+- `schedules`
+
+Também é recomendado configurar Row Level Security (RLS) e políticas por estabelecimento.
+
+## Próximos Passos Recomendados
+
+- Definir e versionar schema SQL/migrations.
+- Configurar CI para lint e build.
+- Adicionar testes (unitários e de integração) para fluxos críticos de booking.
+
+## Licença
+
+Defina aqui a licença do projeto (ex.: MIT, proprietária, etc.).
